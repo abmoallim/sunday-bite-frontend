@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
-import { ShoppingCart, User, Menu as MenuIcon } from 'lucide-react'; // Added MenuIcon for mobile
+import { ShoppingCart, User, Menu as MenuIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import {
@@ -13,11 +12,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import LoginForm from '@/components/auth/LoginForm'; // Import the LoginForm
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [loginDialogOpen, setLoginDialogOpen] = React.useState(false);
 
   return (
     <nav className="bg-background/80 backdrop-blur-md shadow-md sticky top-0 z-50">
@@ -64,9 +72,20 @@ const Navbar: React.FC = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button onClick={() => alert('Login modal/page to be implemented. For now, mock login: useAuth().login("test@example.com", "customer")')} variant="outline">
-                Sign In
-              </Button>
+              <Dialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline">Sign In / Sign Up</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Access Your Account</DialogTitle>
+                    <DialogDescription>
+                      Sign in or create an account to enjoy full features.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <LoginForm onSuccess={() => setLoginDialogOpen(false)} />
+                </DialogContent>
+              </Dialog>
             )}
           </div>
 
@@ -95,7 +114,20 @@ const Navbar: React.FC = () => {
                 <Button onClick={() => { logout(); setMobileMenuOpen(false); }} className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-red-500 hover:bg-red-100 dark:hover:bg-red-900">Log Out</Button>
               </>
             ) : (
-               <Button onClick={() => { alert('Login modal/page to be implemented.'); setMobileMenuOpen(false); }} className="w-full text-left block px-3 py-2 rounded-md text-base font-medium">Sign In</Button>
+               <Dialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
+                <DialogTrigger asChild>
+                   <Button className="w-full text-left block px-3 py-2 rounded-md text-base font-medium" onClick={() => setMobileMenuOpen(false)}>Sign In / Sign Up</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Access Your Account</DialogTitle>
+                    <DialogDescription>
+                      Sign in or create an account to enjoy full features.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <LoginForm onSuccess={() => { setLoginDialogOpen(false); setMobileMenuOpen(false); }} />
+                </DialogContent>
+              </Dialog>
             )}
           </div>
         </div>
