@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import ThemeToggle from './ThemeToggle';
+import ThemeToggle from './ThemeToggle.jsx';
 import { ShoppingCart, User, Menu as MenuIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button.jsx';
+import { useAuth } from '@/hooks/useAuth.js';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu.jsx";
 import {
   Dialog,
   DialogContent,
@@ -19,12 +19,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import LoginForm from '@/components/auth/LoginForm';
-import { useCart } from '@/hooks/useCart';
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/dialog.jsx";
+import LoginForm from '@/components/auth/LoginForm.jsx';
+import { useCart } from '@/hooks/useCart.js';
+import { Badge } from '@/components/ui/badge.jsx';
 
-const Navbar: React.FC = () => {
+const Navbar = () => {
   const { user, logout } = useAuth();
   const { cartItems } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
@@ -34,7 +34,7 @@ const Navbar: React.FC = () => {
 
   const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-  const handleSmoothScrollToSection = (sectionId: string, event?: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleSmoothScrollToSection = (sectionId, event) => {
     if (event) event.preventDefault();
     
     const navigateAndScroll = () => {
