@@ -21,13 +21,18 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import LoginForm from '@/components/auth/LoginForm';
+import { useCart } from '@/hooks/useCart';
+import { Badge } from '@/components/ui/badge';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
+  const { cartItems } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [loginDialogOpen, setLoginDialogOpen] = React.useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleSmoothScrollToSection = (sectionId: string, event?: React.MouseEvent<HTMLAnchorElement>) => {
     if (event) event.preventDefault();
@@ -78,8 +83,14 @@ const Navbar: React.FC = () => {
               Menu
             </a>
             <Link to="/about" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">About</Link>
-            <Link to="/cart" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
-              <ShoppingCart className="h-5 w-5 inline-block" /> Cart
+            <Link to="/cart" className="relative flex items-center text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+              <ShoppingCart className="h-5 w-5" />
+              <span className="ml-1">Cart</span>
+              {cartItemCount > 0 && (
+                <Badge className="absolute -top-2 -right-2 h-5 min-w-[1.25rem] flex items-center justify-center rounded-full bg-orange-500 text-white text-xs px-1 border-transparent">
+                  {cartItemCount}
+                </Badge>
+              )}
             </Link>
             {user ? (
                <DropdownMenu>
@@ -126,8 +137,13 @@ const Navbar: React.FC = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
-            <Link to="/cart" className="text-foreground hover:text-primary p-2 rounded-md">
+            <Link to="/cart" className="relative text-foreground hover:text-primary p-2 rounded-md">
               <ShoppingCart className="h-6 w-6" />
+              {cartItemCount > 0 && (
+                <Badge className="absolute top-0 right-0 h-5 min-w-[1.25rem] flex items-center justify-center rounded-full bg-orange-500 text-white text-xs px-1 border-transparent transform translate-x-1/3 -translate-y-1/3">
+                  {cartItemCount}
+                </Badge>
+              )}
             </Link>
             <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="ml-2">
               <MenuIcon className="h-6 w-6" />
