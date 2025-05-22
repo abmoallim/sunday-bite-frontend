@@ -8,6 +8,13 @@ import { useMenu } from '@/contexts/MenuContext';
 const HomePage: React.FC = () => {
   const { menuItems } = useMenu();
 
+  const handleViewMenuClick = () => {
+    const menuSection = document.getElementById('menu');
+    if (menuSection) {
+      menuSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -21,7 +28,11 @@ const HomePage: React.FC = () => {
           <div className="relative container mx-auto px-4">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold mb-4">Welcome to Sunday Bite</h1>
             <p className="text-lg sm:text-xl mb-8">Experience the Authentic Flavors of Halal Cuisine.</p>
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Button 
+              size="lg" 
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              onClick={handleViewMenuClick} // Added onClick handler
+            >
               View Our Menu
             </Button>
           </div>
@@ -40,17 +51,6 @@ const HomePage: React.FC = () => {
             ) : (
               <p className="text-center text-muted-foreground">No menu items available at the moment. Admin can add items from the dashboard.</p>
             )}
-          </div>
-        </section>
-
-        {/* About Us Section (Placeholder) */}
-        <section id="about" className="py-16">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-serif font-bold text-primary mb-6">About Us</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Sunday Bite is dedicated to bringing you the finest Halal Muslim food, prepared with fresh ingredients and traditional recipes. 
-              Join us for an unforgettable dining experience. We believe in quality, flavor, and a warm, welcoming atmosphere for all our guests.
-            </p>
           </div>
         </section>
         

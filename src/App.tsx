@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import CartPage from "./pages/CartPage";
 import DashboardPage from "./pages/DashboardPage";
+import AboutUsPage from "./pages/AboutUsPage"; // Import the new AboutUsPage
 import NotFound from "./pages/NotFound";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute"; 
@@ -16,7 +17,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { FavouriteProvider } from "./contexts/FavouriteContext";
-import { MenuProvider } from "./contexts/MenuContext"; // Import MenuProvider
+import { MenuProvider } from "./contexts/MenuContext";
 
 
 const queryClient = new QueryClient();
@@ -25,7 +26,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuthProvider>
-        <MenuProvider> {/* Wrap with MenuProvider */}
+        <MenuProvider>
           <CartProvider>
             <FavouriteProvider>
               <TooltipProvider>
@@ -34,6 +35,7 @@ const App = () => (
                 <BrowserRouter>
                   <Routes>
                     <Route path="/" element={<HomePage />} />
+                    <Route path="/about" element={<AboutUsPage />} /> {/* Add route for AboutUsPage */}
                     
                     <Route element={<ProtectedRoute />}>
                       <Route path="/cart" element={<CartPage />} />
@@ -46,11 +48,10 @@ const App = () => (
               </TooltipProvider>
             </FavouriteProvider>
           </CartProvider>
-        </MenuProvider> {/* Close MenuProvider */}
+        </MenuProvider>
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
 
 export default App;
-

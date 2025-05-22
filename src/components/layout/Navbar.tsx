@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 import { ShoppingCart, User, Menu as MenuIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -20,12 +20,41 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import LoginForm from '@/components/auth/LoginForm'; // Import the LoginForm
+import LoginForm from '@/components/auth/LoginForm';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [loginDialogOpen, setLoginDialogOpen] = React.useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleSmoothScrollToSection = (sectionId: string, event?: React.MouseEvent<HTMLAnchorElement>) => {
+    if (event) event.preventDefault();
+    
+    const navigateAndScroll = () => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        // Element might not be there immediately after navigation
+        setTimeout(() => {
+          const el = document.getElementById(sectionId);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+    };
+
+    if (location.pathname === '/') {
+      navigateAndScroll();
+    } else {
+      navigate(`/#${sectionId}`);
+      // Scrolling will be handled by browser or useEffect in target page if needed,
+      // but react-router-dom v6 often handles hash scrolling well.
+      // For more robust cross-page scroll, HomePage could have a useEffect for location.hash
+    }
+    if (mobileMenuOpen) setMobileMenuOpen(false);
+  };
 
   return (
     <nav className="bg-background/80 backdrop-blur-md shadow-md sticky top-0 z-50">
@@ -41,8 +70,14 @@ const Navbar: React.FC = () => {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-4">
             <Link to="/" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">Home</Link>
-            <Link to="/#menu" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">Menu</Link>
-            <Link to="/#about" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">About</Link>
+            <a 
+              href="/#menu" 
+              onClick={(e) => handleSmoothScrollToSection('menu', e)}
+              className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium cursor-pointer"
+            >
+              Menu
+            </a>
+            <Link to="/about" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">About</Link>
             <Link to="/cart" className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
               <ShoppingCart className="h-5 w-5 inline-block" /> Cart
             </Link>
@@ -106,8 +141,14 @@ const Navbar: React.FC = () => {
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <Link to="/" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-            <Link to="/#menu" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium" onClick={() => setMobileMenuOpen(false)}>Menu</Link>
-            <Link to="/#about" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium" onClick={() => setMobileMenuOpen(false)}>About</Link>
+            <a 
+              href="/#menu" 
+              onClick={(e) => { handleSmoothScrollToSection('menu', e); }}
+              className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium cursor-pointer"
+            >
+              Menu
+            </a>
+            <Link to="/about" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium" onClick={() => setMobileMenuOpen(false)}>About</Link>
              {user ? (
               <>
                 <Link to="/dashboard" className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
@@ -116,7 +157,7 @@ const Navbar: React.FC = () => {
             ) : (
                <Dialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
                 <DialogTrigger asChild>
-                   <Button className="w-full text-left block px-3 py-2 rounded-md text-base font-medium" onClick={() => setMobileMenuOpen(false)}>Sign In / Sign Up</Button>
+                   <Button className="w-full text-left block px-3 py-2 rounded-md text-base font-medium" onClick={() => { setMobileMenuOpen(false); /* Keep dialog open if triggered from here */ }}>Sign In / Sign Up</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
