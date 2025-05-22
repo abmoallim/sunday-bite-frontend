@@ -10,12 +10,13 @@ import CartPage from "./pages/CartPage";
 import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./pages/NotFound";
 
-import ProtectedRoute from "./components/auth/ProtectedRoute"; // Import ProtectedRoute
+import ProtectedRoute from "./components/auth/ProtectedRoute"; 
 
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { FavouriteProvider } from "./contexts/FavouriteContext";
+import { MenuProvider } from "./contexts/MenuContext"; // Import MenuProvider
 
 
 const queryClient = new QueryClient();
@@ -24,31 +25,32 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuthProvider>
-        <CartProvider>
-          <FavouriteProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  
-                  {/* Protected Routes */}
-                  <Route element={<ProtectedRoute />}>
-                    <Route path="/cart" element={<CartPage />} />
-                    <Route path="/dashboard" element={<DashboardPage />} />
-                  </Route>
-                  
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
-            </TooltipProvider>
-          </FavouriteProvider>
-        </CartProvider>
+        <MenuProvider> {/* Wrap with MenuProvider */}
+          <CartProvider>
+            <FavouriteProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    
+                    <Route element={<ProtectedRoute />}>
+                      <Route path="/cart" element={<CartPage />} />
+                      <Route path="/dashboard" element={<DashboardPage />} />
+                    </Route>
+                    
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </BrowserRouter>
+              </TooltipProvider>
+            </FavouriteProvider>
+          </CartProvider>
+        </MenuProvider> {/* Close MenuProvider */}
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
 
 export default App;
+
