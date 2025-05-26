@@ -1,21 +1,26 @@
 
-import React, { createContext, useState, ReactNode, useEffect } from 'react';
-import { MenuItem } from '@/types';
-
-export interface CartItem extends MenuItem { // Exporting CartItem for use in other components if needed
-  quantity: number;
-}
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import { CartItem } from '@/types';
 
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (item: MenuItem) => void;
+  addToCart: (item: CartItem) => void;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
   getCartTotal: () => number;
+  getCartItemCount: () => number;
 }
 
-export const CartContext = createContext<CartContextType | undefined>(undefined);
+const CartContext = createContext<CartContextType | undefined>(undefined);
+
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (context === undefined) {
+    throw new Error('useCart must be used within a CartProvider');
+  }
+  return context;
+};
 
 interface CartProviderProps {
   children: ReactNode;
@@ -24,57 +29,47 @@ interface CartProviderProps {
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // Load cart from localStorage on initial render
   useEffect(() => {
-    const storedCart = localStorage.getItem('sundayBiteCart');
+    const storedCart = localStorage.getItem('testHub_cart');
     if (storedCart) {
       try {
-        const parsedCart = JSON.parse(storedCart);
-        if (Array.isArray(parsedCart)) { // Basic validation
-          setCartItems(parsedCart);
-        } else {
-          localStorage.removeItem('sundayBiteCart'); // Clear invalid data
-        }
+        setCartItems(JSON.parse(storedCart));
       } catch (error) {
-        console.error("Failed to parse cart from localStorage", error);
-        localStorage.removeItem('sundayBiteCart'); // Clear corrupted data
+        console.error('Failed to parse cart data:', error);
+        localStorage.removeItem('testHub_cart');
       }
     }
   }, []);
 
-  // Save cart to localStorage whenever cartItems changes
   useEffect(() => {
-    // Only save if cartItems is not the initial empty array from useState,
-    // unless it's a deliberate clear action (handled by clearCart setting empty array).
-    // This prevents overwriting a loaded cart with an empty one on initial mount if localStorage was empty.
-    // However, the current setup will save an empty array if localStorage was initially empty, which is acceptable.
-    localStorage.setItem('sundayBiteCart', JSON.stringify(cartItems));
+    localStorage.setItem('testHub_cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const addToCart = (item: MenuItem) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(ci => ci.id === item.id);
+  const addToCart = (item: CartItem) => {
+    setCartItems(prev => {
+      const existingItem = prev.find(cartItem => cartItem.id === item.id);
       if (existingItem) {
-        return prevItems.map(ci =>
-          ci.id === item.id ? { ...ci, quantity: ci.quantity + 1 } : ci
+        return prev.map(cartItem =>
+          cartItem.id === item.id
+            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            : cartItem
         );
       }
-      return [...prevItems, { ...item, quantity: 1 }];
+      return [...prev, { ...item, quantity: 1 }];
     });
-    // Toast notification will be handled in MenuItemCard
   };
 
   const removeFromCart = (itemId: string) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
+    setCartItems(prev => prev.filter(item => item.id !== itemId));
   };
 
   const updateQuantity = (itemId: string, quantity: number) => {
     if (quantity <= 0) {
       removeFromCart(itemId);
     } else {
-      setCartItems(prevItems =>
-        prevItems.map(item =>
-          item.id === itemId ? { ...item, quantity: quantity } : item
+      setCartItems(prev =>
+        prev.map(item =>
+          item.id === itemId ? { ...item, quantity } : item
         )
       );
     }
@@ -88,10 +83,21 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
+  const getCartItemCount = () => {
+    return cartItems.reduce((count, item) => count + item.quantity, 0);
+  };
+
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, getCartTotal }}>
+    <CartContext.Provider value={{
+      cartItems,
+      addToCart,
+      removeFromCart,
+      updateQuantity,
+      clearCart,
+      getCartTotal,
+      getCartItemCount
+    }}>
       {children}
     </CartContext.Provider>
   );
 };
-
