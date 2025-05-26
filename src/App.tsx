@@ -1,23 +1,23 @@
 
-import { Toaster } from "@/components/ui/toaster"; // .jsx extension removed if present
-import { Toaster as Sonner } from "@/components/ui/sonner"; // .jsx extension removed if present
-import { TooltipProvider } from "@/components/ui/tooltip"; // .jsx extension removed if present
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import HomePage from "./pages/HomePage.jsx"; // Keep .jsx for now as it's a .jsx file
-import CartPage from "./pages/CartPage.jsx"; // Keep .jsx
-import DashboardPage from "./pages/DashboardPage.tsx"; // This is already .tsx
-import AboutUsPage from "./pages/AboutUsPage.jsx"; // Keep .jsx
-import NotFound from "./pages/NotFound.jsx"; // Keep .jsx
+import HomePage from "./pages/HomePage"; // Updated to .tsx
+import CartPage from "./pages/CartPage"; // Updated to .tsx
+import DashboardPage from "./pages/DashboardPage";
+import AboutUsPage from "./pages/AboutUsPage.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
-import ProtectedRoute from "./components/auth/ProtectedRoute.jsx"; // Keep .jsx
+import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 
-import { ThemeProvider } from "./contexts/ThemeContext.jsx"; // Keep .jsx
-import { AuthProvider } from "./contexts/AuthContext.jsx"; // Keep .jsx
-import { CartProvider } from "./contexts/CartContext.jsx"; // Keep .jsx
-import { FavouriteProvider } from "./contexts/FavouriteContext.jsx"; // Keep .jsx
-import { MenuProvider } from "./contexts/MenuContext.tsx"; // This is .tsx
+import { ThemeProvider } from "./contexts/ThemeContext.jsx";
+import { AuthProvider } from "./contexts/AuthContext.jsx";
+import { CartProvider } from "./contexts/CartContext"; // Updated to .tsx
+import { FavouriteProvider } from "./contexts/FavouriteContext.jsx";
+import { MenuProvider } from "./contexts/MenuContext";
 
 const queryClient = new QueryClient();
 
@@ -54,4 +54,3 @@ const App = () => (
 );
 
 export default App;
-
